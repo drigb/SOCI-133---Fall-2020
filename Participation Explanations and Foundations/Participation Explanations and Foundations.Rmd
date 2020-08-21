@@ -1,0 +1,402 @@
+---
+title: "Welcome to SOCI133 <br/> <br/> Sociology of Politics - Fall 2020"
+author: "David Rigby"
+output:
+  xaringan::moon_reader:
+    seal: false
+    
+---
+class: center
+name: title
+background-image: url(img/battle.png)
+background-size: cover
+
+```{r xaringan-tile-view, echo=FALSE}
+# Enables the ability to show all slides in a tile overview by pressing "o"
+# devtools::install_github("gadenbuie/xaringanExtra")
+xaringanExtra::use_tile_view()
+```
+
+<!-- edit name1 and name2 in the YAML above -->
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 1, warning = FALSE, message = FALSE)
+
+
+library('htmltools')
+ 
+  
+```
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<b><span style="color: white; font-size: 50px"><br/>Explaining Participation: </br> Madison v. de Toqueville </span></b>
+
+
+---
+class: left
+name: implications
+# Implications...
+
+What are the implications of <b>1) decreased</b> political and civic engagement by Americans, <b>2) increasing</b> numbers of political organizations and nonprofits, and <b>3) increasingly</b> large, rich, and more professional parties?
+--
+
+- <b>This may depend in part on how elected officials interpret public participation.</b>
+
+--
+
+ - Individuals have less influence over politics?
+
+--
+
+ - Elites and monied interests have more influence over politics?
+
+--
+
+ - Increased political polarization and institutional gridlock?
+
+---
+class: left
+name: putnamtakeaways
+# Key Takeaways from Putnam
+
+<b>1)</b> The civic activities that embody social capital are the ones that have declined the most (p. 45).
+
+<b>2)</b> It's important to distinguish between <b>nominal</b> and <b>active and involved</b> membership (p. 58).
+
+<b>3)</b> Despite the fact that Americans are more educated and more skilled now than before, we use that education and those skills <b>less for civic activities</b> (p. 62).
+
+<b>4)</b> Politics may be more efficient, but it involves <b>less deliberation</b> (p. 40)
+
+---
+class: left
+name: putnams_explanation
+
+# Putnam's Explanation of Decreased Civic Engagement
+
+<b>What is the explanation, according to Putnam?</b>
+
+--
+
+1) Age effect
+
+People behave differently based on their age.
+
+One hypothesis would be: older people vote more.
+
+--
+
+2) Cohort effect
+
+Differences in behavior based on generational shifts, not necessarily on age.
+
+One hypothesis would be: Baby Boomers vote more than Millenials.
+
+--
+
+3) Period effect
+
+Differences in behavior attributed to particular events or time periods.
+
+One hypothesis would be: People who grew up in the 1960s protest more than others.
+
+---
+class: left
+name: votingchart
+# Voting by Generation
+<b>Does this chart show evidence of an age, cohort, and/or period effect?</b>
+
+
+```{r, echo=FALSE,figures-side, out.width="60%", out.height="80%",fig.show='hold'}
+
+knitr::include_graphics(c("img/pew_voting.jpg"))
+
+```
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+---
+class: left
+name: assumptions
+# Assumptions About Human Nature
+
+--
+
+<b>General Question:</b> Why do individuals make the decisions that they do?
+
+--
+
+<b>Specific question:</b> Why do individuals engage in public life?
+
+--
+
+A lot of philosophical writing, especially during the Enlightenment, was concerned with <b>what it means to be human.</b>
+
+--
+
+- Immanuel Kant (1784). Humans have free will and can use <b>reason.</b>
+
+--
+
+- Adam Smith (1776). "Certain propensity in human nature...to truck, barter, and exchange" (from <em>Wealth of Nations</em>).
+
+
+---
+class: left
+name:assumptions2
+
+# Assumptions About Human Nature
+
+
+<b>General Question:</b> Why do individuals make the decisions that they do?
+
+
+
+<b>Specific question:</b> Why do individuals engage in public life?
+
+
+
+A lot of philosophical writing, especially during the Enlightenment, was concerned with <b>what it means to be human.</b>
+
+--
+
+- Karl Marx (1845). "[Humans] begin to distinguish themselves from animals as soon as they begin to produce their means of subsistence" (from <em>The German Ideology</em>).
+
+--
+
+- John Stuart Mill (1859). Individuals act based on what what they find rewarding or beneficial, and an individual "is the person most interested in his own well-being" (p. 55).
+
+--
+
+<b>These assumptions continue to shape our theories about individual behavior.</b>
+
+
+---
+
+class: left
+name: Madison1
+# Madison: Federalist #10
+
+James Madison (1751-1836)
+
+- Wrote Federalist #10 in 1787
+
+<b>For Madison, what are the causes of faction (conflict) in society?</b>
+
+--
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em>...the causes of faction [are]: ... the liberty which is essential to its existence; ...[and the fact that every citizen does not share] the same opinions, the same passions, and the same interests</em></span>]
+
+
+---
+
+class: left
+name: Madison2
+# Madison: Federalist #10
+
+James Madison (1751-1836)
+
+- Wrote Federalist #10 in 1787
+
+<b>Why shouldn't society remove the causes of faction (conflict)?</b>
+
+--
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> The latent causes of faction are thus sown in the nature of man... [because people have different faculties (capacities) and attendant personal interests. And]... The protection of these faculties is the first object of government. </em></span>]
+
+
+---
+
+class: left
+name: Madison3
+# Madison: Federalist #10
+
+<b>1)</b> A faction is a group of people united by common interests, against the interests of some other group.
+
+--
+
+<b>2)</b> Conflict arises from human nature.
+
+--
+
+<b>3)</b> Human beings, by nature, have different interests and passions.
+
+--
+
+<b>4)</b> Therefore, we act based on those interests and passions.
+
+--
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> The inference to which we are brought is, that the CAUSES of faction cannot be removed, and that relief is only to be sought in the means of controlling its EFFECTS. </em></span>]
+
+</br>
+ - <b>And a republican form of government is best suited to control the effects of conflict</b>
+
+
+---
+class: left
+name: detoqueville
+# de Toqueville: Democracy in America
+
+Alexis de Tocqueville (1805-1859)
+
+- Wrote Democracy in America (Volume I in 1835, Volume II in 1840)
+
+--
+
+<b>What does Tocqueville say about self-interest?</b>
+
+--
+
+- Personal freedom breeds indifference to the lives of others.
+
+--
+
+- But, while "self-interest" may direct human action, it does not <b>regulate</b> individual behavior.
+
+--
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> [The feelings of self-interest and public indifference] which despotism engenders are precisely those which equality fosters. These two things mutually and perniciously complete and assist each other. Equality places men side by side, unconnected by any common tie. </em></span>]
+
+
+---
+class: left
+name: detoqueville2
+# de Toqueville: Democracy in America
+
+
+
+<b>What is it about local public affairs that potentially dampens self-interest?</b>
+
+--
+
+- In a representative government that values "freedom," people come to recognize the interconnectedness of their interests.
+
+ - especially when governance at all levels (local and central) is derived from the public.
+
+--
+
+- It becomes instinctual that we "attend to the interest of the public"
+
+--
+
+
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> Although private interest directs the greater part of human actions in the United States, as well as elsewhere, it does not regulate them all. The Americans have combated by free institutions the tendency of equality to keep men asunder, and they have subdued it...</em></span>]
+
+---
+class: left
+name: detoqueville3
+# de Toqueville: Democracy in America
+
+
+
+<b>What is it about local public affairs that potentially dampens self-interest?</b>
+
+- In a representative government, it becomes instinctual that we "attend to the interest of the public"
+
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> Men attend to the interests of the public, first by necessity, afterward, by choice: what was intentional becomes an instinct; and by dint of working for the good of one's fellow-citizens, the habit and the taste for serving them is at length acquired </em></span>]
+
+--
+
+- <b>Is this true today?</b>
+
+---
+class: left
+name: competing_ex
+#Competing Explanations Of Public Engagement
+
+<b>The Setup for David Campbell's book (reading for Wednesday):</b>
+
+--
+
+Why do we engage in public life?
+
+--
+
+<b>1) Madison -- </b>act to protect your self-interest
+
+--
+
+<b>2) Tocqueville -- </b>act out of a civic duty
+
+---
+class: left
+name: madtoq
+# Madison & de Toqueville
+
+<b>Both men make strong assumptions about human nature</b>
+
+--
+
+- What is missing from their discussion?
+
+--
+
+</br>
+.center[<span style="font-size: 30px; font-family: Montserrat;"><em> and as he sees no particular ground of animosity to them, <b>since he is never either their master or their slave</b> his heart readily leans to the side of kindness. </em></span>]
+
+---
+class: left
+name: rct
+# Ractional Choice Theory (RCT):
+
+<b>A broad set of theories about why individuals act.</b>
+
+--
+
+<b>1) </b> Humans are <em>hedonistic</em>, seeking to <b>maximize pleasure</b> and <b>minimize pain.</b>
+
+--
+
+<b>2) </b> People have a <b>hierarchy of preferences</b> and individuals choose based on <b>expected costs and benefits</b>.
+
+--
+
+<b>3) </b> Aside from costs, individuals decide based on information regarding the different choices.
+
+--
+
+<b>4) </b> Individuals act <b>rationally</b>, but this does <b>NOT</b> mean that an individual's perception is correct.
+
+- Acting rationally means acting based on an individual's own understanding of their situation in life, their preferences, and their expectations.
+
+--
+
+<b>5) </b> Theory doesn't say individuals act selfishly, but rather that their motivations are <b>based on self-interest</b>.
+
+
+---
+class: left
+name: upcoming
+# Coming Up
+
+<b>NO CLASS MONDAY</b>
+
+- Readings for Wednesday (Campbell Chapters 1 and 2).
+ - <b>on Sakai</b>
+---
