@@ -687,7 +687,7 @@ ggplotly(ggplot() +
 ```
 
 
-### Parental Nativity and Being Republican (Regression)
+### Parental Nativity and Patisan ID (Regression)
 
 ```{r}
 nativity$foreign_born <- 0
@@ -726,8 +726,6 @@ new_order <- order(rep_table$estimate, decreasing = FALSE)
 rep_table$term <- as.character(rep_table$term)
 rep_table$term[rep_table$term=="parent_fbNative-Born"] <- "Native-Born Parents"
 rep_table$term <- factor(rep_table$term, levels = rep_table$term[new_order])
-
-rep_table$term[rep_table$term=="parent_fbNative"]
 # plot coefficient plot
 
 rep_plot <- ggplot(rep_table, aes(x=term, y = estimate)) + 
