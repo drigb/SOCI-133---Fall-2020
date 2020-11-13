@@ -209,7 +209,7 @@ cond_cases_model$term <- factor(cond_cases_model$term, levels = cond_cases_model
 plot_cases <- ggplot(cond_cases_model, aes(x=term, y = estimate)) + 
   geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
   geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
-  labs(x="Coefficient", y="Estimate", title="Coefficient Estimates of Strength of \nPartisanship on Campaign Event Attendance") +
+  labs(x="", y="Coefficient Estimate", title="Coefficient Estimates of Strength of \nPartisanship on Campaign Event Attendance") +
   theme(plot.title = element_text(size = 6)) +
   theme(legend.title = element_blank()) +
   theme(axis.title=element_text(size=8)) +
@@ -492,7 +492,7 @@ tv_model$term <- factor(tv_model$term, levels = tv_model$term[new_order])
 tv_plot <- ggplot(tv_model, aes(x=term, y = estimate)) + 
   geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
   geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
-  labs(x="Coefficient", y="Estimate", title="Coefficient Estimates of Regression Model of \nMedia Usage on Likelihood of Voting") +
+  labs(x="", y="Coefficient Estimate", title="Coefficient Estimates of Regression Model of \nMedia Usage on Likelihood of Voting") +
   theme(plot.title = element_text(size = 6)) +
   theme(legend.title = element_blank()) +
   theme(axis.title=element_text(size=8)) +
@@ -525,7 +525,7 @@ att_model$term <- factor(att_model$term, levels = att_model$term[new_order])
 att_plot <- ggplot(att_model, aes(x=term, y = estimate)) + 
   geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
   geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
-  labs(x="Coefficient", y="Estimate", title="Coefficient Estimates of Regression Model of Media \nUsage on Likelihood of Attending Campaign Event") +
+  labs(x="", y="Coefficient Estimate", title="Coefficient Estimates of Regression Model of Media \nUsage on Likelihood of Attending Campaign Event") +
   theme(plot.title = element_text(size = 6)) +
   theme(legend.title = element_blank()) +
   theme(axis.title=element_text(size=8)) +
@@ -733,7 +733,7 @@ rep_table$term <- factor(rep_table$term, levels = rep_table$term[new_order])
 rep_plot <- ggplot(rep_table, aes(x=term, y = estimate)) + 
   geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
   geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
-  labs(x="Coefficient", y="Estimate", title="Coefficient Estimates of Regression Model of \nParental Nativity and Being Republican") +
+  labs(x="", y="Coefficient Estimate", title="Coefficient Estimates of Regression Model of \nParental Nativity and Being Republican") +
   theme(plot.title = element_text(size = 6)) +
   theme(legend.title = element_blank()) +
   theme(axis.title=element_text(size=8)) +
@@ -874,27 +874,45 @@ ggplotly(ggplot() +
 ```
 
 
-### Political Ideology by Gender
+### Predictors of Political Ideology (Regression)
 
 ```{r}
 
-#Side-by-side Density plot of Political Ideology, by gender
-p1 <- ggplotly(ggplot(data=subset(cox, Year==1980 & !is.na(Female) & !is.na(ideology7)), aes(x=ideology7, group=Female,fill = Female)) +
-  theme(legend.position="none") +
-  geom_density(adjust=1.5, alpha=.4,kernel = "gaussian",) +
-  ggtitle("Political Ideology, by Gender | Left = 1980, Right = 2016") +
-  scale_x_continuous(breaks = c(1,2,3,4,5,6,7), labels = c('Extr. Lib.', 'Lib.', 'Weak Lib', 'Moderate','Weak Cons.','Cons.','Extr. Cons')) +
-  theme_ipsum())
+#   Linear regression of Gender and Political Ideology
+# Controlling for Party identification, age, gender, race, education level, income, and survey year
+# b) Construct model    
+model1 <- ideology7 ~ # Outcome of interest
+  Female +
+  Age +
+  Black +
+  Latino +
+  highschool +
+  somecollege +
+  college +
+  income_bottomthird +
+  Year
 
+# c) Run The Model
+#    Paste a picture of the Model output into the Word document you submit to Sakai.     
 
-p2 <- ggplotly(ggplot(data=subset(cox, Year==2016 & !is.na(Female) & !is.na(ideology7)), aes(x=ideology7, group=Female,fill = Female)) +
-  theme(legend.position="none") +
-  geom_density(adjust=1.5, alpha=.4,kernel = "gaussian",) +
-  scale_x_continuous(breaks = c(1,2,3,4,5,6,7), labels = c('Extr. Lib.', 'Lib.', 'Weak Lib', 'Moderate','Weak Cons.','Cons.','Extr. Cons')) +
-  theme_ipsum())
+Cox1 <- lm(data = cox, formula = model1)
+Cox1_model <- tidy(Cox1, conf.int = TRUE) %>% 
+  filter(!str_detect(term, 'factor|Intercept'))
+new_order <- order(Cox1_model$estimate, decreasing = FALSE)
+Cox1_model$term <- as.character(Cox1_model$term)
+Cox1_model$term <- factor(Cox1_model$term, levels = Cox1_model$term[new_order])
+# plot coefficient plot
+Cox1_plot <- ggplot(Cox1_model, aes(x=term, y = estimate)) + 
+  geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
+  geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
+  labs(x="", y="Coefficient Estimate", title="Predictors of Political Ideology \n(negative=liberal, positive=conservative)") +
+  theme(plot.title = element_text(size = 6)) +
+  theme(legend.title = element_blank()) +
+  theme(axis.title=element_text(size=8)) +
+  coord_flip() +
+  theme_minimal()
 
-
-subplot(p1, p2,  titleY = TRUE)
+ggplotly(Cox1_plot)
 
 
 ```
