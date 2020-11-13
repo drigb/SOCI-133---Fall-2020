@@ -536,6 +536,109 @@ ggplotly(att_plot)
 ```
 
 
+
+Row {.tabset .tabset-fade data-height=600}
+--------------------------------------------------------
+
+### Media Consumption and Engagement - Hannah Davis
+
+My research shows that consuming election related content on certain types of media, specifically newspaper and radio, increases the likelihood that someone votes. Understanding what motivates the public to vote helps political scientists understand trends in society. It also helps campaigns focus their efforts where they will make the biggest impact. For example, according to my research, people who watch election related content on TV are not as likely as people who do the same on the radio or newspaper to vote, so campaigns should put more energy into newspaper and radio campaign content because those voters are the most likely to actually vote for them. 
+
+
+
+### Decline in Media Consumption (Time Trend)
+```{r}
+davis <- anes
+# Transform data
+
+davis$Age[davis$Age=="97. 97 years old (1952, 1974, 1996 and later: or older); 2012,2016: 90"] <- 97
+davis$Age[davis$Age=="98. 98 years old (1958-1962, 1966, 1968: or older)"] <- 98
+davis$Age[davis$Age=="99. 99 years old (1976-1990,1994,2002: or older)"] <- 99
+davis$Age <- as.numeric(davis$Age)
+
+
+# Voting
+
+davis$Voted[davis$Voted=="1. No, did not vote"] <- 0
+davis$Voted[davis$Voted=="2. Yes, voted"] <- 1   
+davis$Voted <- as.numeric(davis$Voted)
+
+# TV
+davis$TV_frequency[davis$TV_frequency=="0. None"] <- 0
+davis$TV_frequency[davis$TV_frequency=="1. One day"] <- 1
+davis$TV_frequency[davis$TV_frequency=="7. Every day"] <- 7
+davis$TV_frequency <- as.numeric(davis$TV_frequency)
+
+# Radio
+
+davis$Radio_frequency[davis$Radio_frequency=="None ('No')"] <- 0
+davis$Radio_frequency[davis$Radio_frequency=="3. Several"] <- 2
+davis$Radio_frequency[davis$Radio_frequency=="1. Good many"] <- 3
+davis$Radio_frequency[davis$Radio_frequency=="5. One or two"] <- 1
+davis$Radio_frequency <- as.numeric(davis$Radio_frequency)
+
+# Newspaper
+davis$Newspaper_frequency[davis$Newspaper_frequency=="0. None"] <- 0
+davis$Newspaper_frequency[davis$Newspaper_frequency=="1. One day "] <- 1
+davis$Newspaper_frequency[davis$Newspaper_frequency=="7. Every day"] <- 7
+davis$Newspaper_frequency <- as.numeric(davis$Newspaper_frequency)
+
+# Media Frequency Graph
+
+media <- subset(davis,!is.na(TV_frequency) & !is.na(Radio_frequency) & !is.na(Newspaper_frequency)) %>%
+  group_by(Year) %>% 
+  mutate(avg.tv = mean(TV_frequency),
+         avg.radio = mean(Radio_frequency),
+         avg.newspaper = mean(Newspaper_frequency))
+
+# Time Trend graph of church attendance
+tv_paper_change <-  ggplotly(ggplot() + 
+                                 geom_line(data = media, aes(x = Year, y = avg.tv, text = "<b>Average TV Viewing</b>"), color = "blue") +
+                                 geom_line(data = media, aes(x = Year, y = avg.radio, text = "<b>Average Radio Listening</b>"), color = "green") +
+                                 geom_line(data = media, aes(x = Year, y = avg.newspaper, text = "<b>Average Newspaper Reading</b>"), color = "orange") +
+                                 xlab('Year') +
+                                 ylab('Frequency') +
+                                 ggtitle("Decline in Frequency of Media Usage over Time (davis 1970-2016)") +
+                                 theme(plot.title = element_text(size = 12)) +
+                                 theme(legend.title = element_blank()) +
+                                 theme(axis.title=element_text(size=8)))
+
+tv_paper_change <- ggplotly(tv_paper_change)
+tv_paper_change
+```
+
+
+### Media Consumption and Voting (Regression)
+```{r}
+davis1 <- glm(Voted ~ TV_frequency + Radio_frequency + Newspaper_frequency + Year + Age, data = davis) #Specify model
+
+davis1_model <- tidy(davis1, conf.int = TRUE) %>% 
+  filter(!str_detect(term, 'factor|Intercept'))
+
+new_order <- order(davis1_model$estimate, decreasing = FALSE)
+davis1_model$term <- as.character(davis1_model$term)
+davis1_model$term[davis1_model$term=="Black1"] <- "Black"
+davis1_model$term[davis1_model$term=="trustgov"] <- "Trust in Government"
+davis1_model$term[davis1_model$term=="ideology7"] <- "Political Ideology"
+
+
+davis1_model$term <- factor(davis1_model$term, levels = davis1_model$term[new_order])
+# plot coefficient plot
+davis1_plot <- ggplot(davis1_model, aes(x=term, y = estimate)) + 
+  geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
+  geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
+  labs(x="", y="Coefficient Estimate", title="Frequency of Media Consumption and \nLikelihood of Voting") +
+  theme(plot.title = element_text(size = 6)) +
+  theme(legend.title = element_blank()) +
+  theme(axis.title=element_text(size=8)) +
+  coord_flip() +
+  theme_minimal()
+
+ggplotly(davis1_plot)
+
+```
+
+
 Political Socialization {data-orientation=rows}
 ===========================================================
 
@@ -1076,7 +1179,7 @@ creisen1_model$term <- factor(creisen1_model$term, levels = creisen1_model$term[
 creisen1_plot <- ggplot(creisen1_model, aes(x=term, y = estimate)) + 
   geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
   geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
-  labs(x="", y="Coefficient Estimate", title="Trust in Gov't. and Welfare Attitudes") +
+  labs(x="", y="Coefficient Estimate", title="Trust in Gov't. and Welfare Attitudes (Scale 0-100)") +
   theme(plot.title = element_text(size = 6)) +
   theme(legend.title = element_blank()) +
   theme(axis.title=element_text(size=8)) +
