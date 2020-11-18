@@ -1021,6 +1021,194 @@ ggplotly(Cox1_plot)
 ```
 
 
+Row {.tabset .tabset-fade data-height=600}
+--------------------------------------------------------
+
+### Religiosity and Political Partisanship - TJ Edwards
+
+My research examined the relationship between religion, church attendance, and political ideology. This research adds to our understanding about politics because, currently, it is common to believe that churchgoers are conservative (which is often true), but my research discovered that as one attends church more often, they are actually more likely to be liberal. This is important because it challenges the current belief that devout Christians HAVE to be conservative. I was motivated to ask this question because I grew up in the church, and the majority of my, white especially, friends were conservative, but I am very liberal. 
+
+My first figure is a coefficient plot showing the results of a logit regression estimating the relationship between certain groups and being conservative. This shows that the three major religious groups present in the model are each less likely to be conservative as they attend church more often. Also displayed in this regression table is the likelihood of being conservative based on education, gender, age, race, income, and year. 
+My next figure is a graph that shows a link between attending church and civic participation. Active churchgoers (blue) were found to vote at a higher rate than those who do not attend church regularly (gray). 
+
+### Religiosity and Political Partisanship (Regression)
+
+```{r}
+edwards <- anes
+
+
+#   e) Get a list of the names of all of the variables in your data set
+
+#Respondent's Partisan ID
+
+edwards$party_3[edwards$Party_ID_3=="1. Democrats (including leaners)"] <- 1
+edwards$party_3[edwards$Party_ID_3=="2. Independents"] <- 2
+edwards$party_3[edwards$Party_ID_3=="3. Republicans (including leaners)"] <- 2
+
+
+# Respondent Democrat and Republican indicator variables
+edwards$Republican[edwards$Party_ID_7=="3. Independent - Democrat" |edwards$Party_ID_7=="2. Weak Democrat"|edwards$Party_ID_7=="1. Strong Democrat"] <- 0
+edwards$Republican[edwards$Party_ID_7=="5. Independent - Republican" |edwards$Party_ID_7=="6. Weak Republican"|edwards$Party_ID_7=="7. Strong Republican"] <- 1
+
+
+edwards$Democrat[edwards$Party_ID_7=="3. Independent - Democrat"   |edwards$Party_ID_7=="2. Weak Democrat"  |edwards$Party_ID_7=="1. Strong Democrat"] <- 1
+edwards$Democrat[edwards$Party_ID_7=="5. Independent - Republican" |edwards$Party_ID_7=="6. Weak Republican"|edwards$Party_ID_7=="7. Strong Republican"] <- 0
+
+
+# Race
+
+edwards$Race_4[edwards$Race_4==""] <- NA
+edwards$Black[edwards$Race_4!="2. Black non-Hispanic"] <- 0
+edwards$Black[edwards$Race_4=="2. Black non-Hispanic"] <- 1
+edwards$White[edwards$Race_4!="1. White non-Hispanic"] <- 0
+edwards$White[edwards$Race_4=="1. White non-Hispanic"] <- 1
+edwards$Latino[edwards$Race_4!="3. Hispanic"] <- 0
+edwards$Latino[edwards$Race_4=="3. Hispanic"] <- 1
+
+#Grade School
+edwards$gradeschool[edwards$Education_4!="1. Grade school or less (0-8 grades)"] <- 0
+edwards$gradeschool[edwards$Education_4=="1. Grade school or less (0-8 grades)"] <- 1
+
+#High School
+edwards$highschool[edwards$Education_4!="2. High school (12 grades or fewer, incl. non-college"] <- 0
+edwards$highschool[edwards$Education_4=="2. High school (12 grades or fewer, incl. non-college"] <- 1
+
+#Some College
+edwards$somecollege[edwards$Education_4!="3. Some college (13 grades or more but no degree;"] <- 0
+edwards$somecollege[edwards$Education_4=="3. Some college (13 grades or more but no degree;"] <- 1
+
+#College
+edwards$college[edwards$Education_4!="4. College or advanced degree (no cases 1948)"] <- 0
+edwards$college[edwards$Education_4=="4. College or advanced degree (no cases 1948)"] <- 1
+
+#Income
+# Bottom Third of the income distribution
+edwards$income_bottomthird[edwards$Family_Income=="1. 0 to 16 percentile" | edwards$Family_Income=="2. 17 to 33 percentile"] <- 1
+edwards$income_bottomthird[edwards$Family_Income!="1. 0 to 16 percentile" & edwards$Family_Income!="2. 17 to 33 percentile"] <- 0
+
+# Middle Third of the income distribution
+edwards$income_middlethird[edwards$Family_Income=="3. 34 to 67 percentile"] <- 1
+edwards$income_middlethird[edwards$Family_Income!="3. 34 to 67 percentile"] <- 0
+
+# Top Third of the income distribution
+edwards$income_topthird[edwards$Family_Income=="4. 68 to 95 percentile" | edwards$Family_Income=="5. 96 to 100 percentile"] <- 1
+edwards$income_topthird[edwards$Family_Income!="4. 68 to 95 percentile" & edwards$Family_Income!="5. 96 to 100 percentile"] <- 0
+
+
+# Gender
+edwards$Female[edwards$Gender=="2. Female"] <- 1
+edwards$Female[edwards$Gender=="1. Male"|edwards$Gender=="3. Other (2016) "] <- 0
+
+# Age
+edwards$Age[edwards$Age=="97. 97 years old (1952, 1974, 1996 and later: or older); 2012,2016: 90"] <- 97
+edwards$Age[edwards$Age=="98. 98 years old (1958-1962, 1966, 1968: or older)"] <- 98
+edwards$Age[edwards$Age=="99. 99 years old (1976-1990,1994,2002: or older)"] <- 99
+edwards$Age <- as.numeric(edwards$Age)
+
+
+# Frequency of Church Attendance
+edwards$Attendance[edwards$Church_Attendance=="5. Never (1990 and later: 'No' in filter)"] <- 0
+edwards$Attendance[edwards$Church_Attendance=="4. A few times a year"] <- 1
+edwards$Attendance[edwards$Church_Attendance=="3. Once or twice a month"] <- 2
+edwards$Attendance[edwards$Church_Attendance=="2. Almost every week (no cases in 1970)"] <- 3
+edwards$Attendance[edwards$Church_Attendance=="1. Every week (Except 1970: almost every week)"] <- 4
+edwards$Voted[edwards$Voted=="1. No, did not vote"] <- 0
+edwards$Voted[edwards$Voted=="2. Yes, voted"]      <- 1
+edwards$Voted <- as.numeric(edwards$Voted)
+
+
+# Religion
+
+edwards$Protestant[edwards$Religion!="1. Protestant"] <- 0
+edwards$Protestant[edwards$Religion=="1. Protestant"] <- 1
+
+edwards$Catholic[edwards$Religion!="2. Catholic [Roman Catholic]"] <- 0
+edwards$Catholic[edwards$Religion=="2. Catholic [Roman Catholic]"] <- 1
+
+edwards$Jewish[edwards$Religion!="3. Jewish"] <- 0
+edwards$Jewish[edwards$Religion=="3. Jewish"] <- 1
+
+edwards$Other_dontknow_Religion[edwards$Religion!="4. Other and none (also includes DK preference)"] <- 0
+edwards$Other_dontknow_Religion[edwards$Religion=="4. Other and none (also includes DK preference)"] <- 1
+
+
+# Create data set with average attendance
+religion <- subset(edwards, !is.na(Attendance))
+
+rep_model <-  Republican ~ # Outcome of interest
+  Attendance + 
+  Catholic + 
+  Jewish + 
+  Protestant + 
+  Attendance*Catholic + 
+  Attendance*Jewish +
+  Attendance*Protestant +
+  highschool +
+  somecollege +
+  college +
+  Female +
+  Age +
+  Black +
+  Latino +
+  income_middlethird +
+  income_topthird +
+  Year
+
+
+#Run Meeting model
+edwards1  <- glm(rep_model, data = edwards) #Specify model
+edwards1_model <- tidy(edwards1, conf.int = TRUE) %>% 
+  filter(!str_detect(term, 'factor|Intercept'))
+new_order <- order(edwards1_model$estimate, decreasing = FALSE)
+edwards1_model$term <- as.character(edwards1_model$term)
+edwards1_model$term <- factor(edwards1_model$term, levels = edwards1_model$term[new_order])
+# plot coefficient plot
+
+edwards1_plot <- ggplot(edwards1_model, aes(x=term, y = estimate)) + 
+  geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
+  geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
+  labs(x="", y="Coefficient Estimate", title="Logit of Religiosity and Likelihood of Being Republican") +
+  theme(plot.title = element_text(size = 6)) +
+  theme(legend.title = element_blank()) +
+  theme(axis.title=element_text(size=8)) +
+  coord_flip() +
+  theme_minimal()
+ggplotly(edwards1_plot)
+
+```
+
+### Church Attendance and Likelihood of Voting (Time Trend)
+
+
+```{r}
+# Time Trend graph of LIKELIHOOD OF VOTING, AS A FUNCTION OF church attendance
+
+voting <- subset(religion, !is.na(Voted) & !is.na(Attendance)) %>%
+  group_by(Year) %>% 
+  mutate(weekly.voted = mean(Voted[Attendance==4]),
+         never.voted = mean(Voted[Attendance==0]))
+
+
+#Graph of the likelihood of voting, for people that attend church weekly, and people that never attend church
+church_vote <- ggplotly(ggplot() + 
+                          geom_line(data = subset(voting,!is.na(Attendance)), aes(x = Year, y = weekly.voted, text = "<b>Likelihood of Voting (Attend Church Weekly)</b>"), color = "blue") +
+                          geom_line(data = subset(voting,!is.na(Attendance)), aes(x = Year, y = never.voted, text = "<b>Likelihood of Voting(Never Attend Church)</b>"), color = "grey") +
+                          xlab('Year') +
+                          ylab('Likelihood of Voting') +
+                          ggtitle("Likelihood of Voting, by Freq. of Church Attendance (1970-2016)") +
+                          theme(plot.title = element_text(size = 12)) +
+                          theme(legend.title = element_blank()) +
+                          theme(axis.title=element_text(size=8)))
+
+church_vote
+
+
+
+
+```
+
+
+
 Public Opinion {data-orientation=rows}
 ===========================================================
 
