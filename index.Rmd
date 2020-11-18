@@ -1253,6 +1253,179 @@ rm(church_vote)
 
 
 
+Row {.tabset .tabset-fade data-height=600}
+--------------------------------------------------------
+
+### Rural/Urban Geography and Political Behavior - Katie Thompson
+
+I ask how one’s geographical area shapes their political beliefs. If there are geographic differences in political beliefs and engagement, this supports Bishop's argument about the effects of geographic clustering on politics. This is interesting because it causes a continuous divide within the country with what states are considered “red” versus “blue”. Shadowing Washington University’s Webster and Stanford’s Gregory Martin’s ideas of residential sorting and geographical polarization (2020), I argue that the psychology involved in homogeneous political communities is strongly correlated to the political stances that are taken. I also use data from the American National Election Studies to present analyses that support my hypothesis.
+
+My first figure presents the results of a logit regression on the likelihood of identifying as Republican. I find that men that live in rural areas are more likely to identify as Republican.
+
+My next figure presents the results of a linear regression on one's level of political engagement.
+
+### Partisanship (Regression)
+
+```{r}
+thompson <- anes
+
+thompson$Age[thompson$Age=="97. 97 years old (1952, 1974, 1996 and later: or older); 2012,2016: 90"] <- 97
+thompson$Age[thompson$Age=="98. 98 years old (1958-1962, 1966, 1968: or older)"] <- 98
+thompson$Age[thompson$Age=="99. 99 years old (1976-1990,1994,2002: or older)"] <- 99
+thompson$Age <- as.numeric(thompson$Age)
+
+# Political Activity
+thompson$Political_Activity[thompson$campaign_activity_count=="1. Lowest level of participation (none)"] <- 1
+thompson$Political_Activity[thompson$campaign_activity_count=="2"] <- 2
+thompson$Political_Activity[thompson$campaign_activity_count=="3"] <- 3
+thompson$Political_Activity[thompson$campaign_activity_count=="4"] <- 4
+thompson$Political_Activity[thompson$campaign_activity_count=="5"] <- 5
+thompson$Political_Activity[thompson$campaign_activity_count=="6. Highest level of participation in campaign activities"] <- 6
+
+#Respondent's Partisan ID
+thompson$party_3[thompson$Party_ID_3=="1. Democrats (including leaners)"] <- 1
+thompson$party_3[thompson$Party_ID_3=="2. Independents"] <- 2
+thompson$party_3[thompson$Party_ID_3=="3. Republicans (including leaners)"] <- 2
+
+
+# Male
+thompson$Male[thompson$Gender=="2. Female" | thompson$Gender=="3. Other (2016)"] <- 0
+thompson$Male[thompson$Gender=="1. Male"] <- 1
+
+# Race
+thompson$Black <- 0
+thompson$Black[thompson$Race_4=="2. Black non-Hispanic"] <- 1
+thompson$White <- 0
+thompson$White[thompson$Race_4=="1. White non-Hispanic"] <- 1
+thompson$Latino <- 0
+thompson$Latino[thompson$Race_4=="3. Hispanic"] <- 1
+
+# Education
+thompson$Grade_School <- 0
+thompson$Grade_School[thompson$Education_4=="1. Grade school or less (0-8 grades)"] <- 1
+thompson$High_School <- 0
+thompson$High_School[thompson$Education_4=="2. High school (12 grades or fewer, incl. non-college"] <- 1
+thompson$Some_College <- 0
+thompson$Some_College[thompson$Education_4=="3. Some college (13 grades or more but no degree;"] <- 1
+thompson$College <- 0
+thompson$College[thompson$Education_4=="4. College or advanced degree (no cases 1948)"] <- 1
+
+# Household Income Distribution
+thompson$HHIncome[thompson$Family_Income_Group=="1. 0 to 16 percentile"] <- 1
+thompson$HHIncome[thompson$Family_Income_Group=="2. 17 to 33 percentile"] <- 2
+thompson$HHIncome[thompson$Family_Income_Group=="3. 34 to 67 percentile"] <- 3
+thompson$HHIncome[thompson$Family_Income_Group=="4. 68 to 95 percentile"] <- 4
+thompson$HHIncome[thompson$Family_Income_Group=="5. 96 to 100 percentile"] <- 5
+
+
+# Race
+thompson$Black <- 0
+thompson$Black[thompson$Race_4=="2. Black non-Hispanic"] <- 1
+thompson$White <- 0
+thompson$White[thompson$Race_4=="1. White non-Hispanic"] <- 1
+thompson$Latino <- 0
+thompson$Latino[thompson$Race_4=="3. Hispanic"] <- 1
+
+
+# Party Identification
+thompson$Republican[thompson$Party_ID_7=="3. Independent - Democrat" |thompson$Party_ID_7=="2. Weak Democrat"|thompson$Party_ID_7=="1. Strong Democrat"] <- 0
+thompson$Republican[thompson$Party_ID_7=="5. Independent - Republican" |thompson$Party_ID_7=="6. Weak Republican"|thompson$Party_ID_7=="7. Strong Republican"] <- 1
+
+thompson$Democrat[thompson$Party_ID_7=="3. Independent - Democrat"   |thompson$Party_ID_7=="2. Weak Democrat"  |thompson$Party_ID_7=="1. Strong Democrat"] <- 1
+thompson$Democrat[thompson$Party_ID_7=="5. Independent - Republican" |thompson$Party_ID_7=="6. Weak Republican"|thompson$Party_ID_7=="7. Strong Republican"] <- 0
+
+# Do people live in cities, suburbs, or rural areas?
+# City
+thompson$City[thompson$Urban=="1. Central cities"] <- 1
+thompson$City[thompson$Urban=="2. Suburban areas"|thompson$Urban=="3. Rural, small towns, outlying and adjacent areas"] <- 0
+
+# Suburbs
+thompson$Suburb[thompson$Urban=="2. Suburban areas"] <- 1
+thompson$Suburb[thompson$Urban=="1. Central cities"|thompson$Urban=="3. Rural, small towns, outlying and adjacent areas"] <- 0
+
+# Rural
+thompson$Rural[thompson$Urban=="3. Rural, small towns, outlying and adjacent areas"] <- 1
+thompson$Rural[thompson$Urban=="1. Central cities"|thompson$Urban=="2. Suburban areas"] <- 0
+
+rep_model <-  Republican ~ # Outcome of interest
+  Rural +
+  Age +
+  Male +
+  Black +
+  Latino +
+  High_School +
+  Some_College +
+  College +
+  HHIncome +
+  Year
+
+thompson2 <- glm(rep_model, data = thompson) #Specify model
+
+thompson2_model <- tidy(thompson2, conf.int = TRUE) %>% 
+  filter(!str_detect(term, 'factor|Intercept'))
+new_order <- order(thompson2_model$estimate, decreasing = FALSE)
+thompson2_model$term <- as.character(thompson2_model$term)
+thompson2_model$term <- factor(thompson2_model$term, levels = thompson2_model$term[new_order])
+# plot coefficient plot
+thompson2_plot <- ggplot(thompson2_model, aes(x=term, y = estimate)) + 
+  geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
+  geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
+  labs(x="", y="Coefficient Estimate", title="OLS Estimates of Urbanicity on \nRepublican Partisanship") +
+  theme(plot.title = element_text(size = 6)) +
+  theme(legend.title = element_blank()) +
+  theme(axis.title=element_text(size=8)) +
+  coord_flip() +
+  theme_minimal()
+
+ggplotly(thompson2_plot)
+
+```
+
+
+### Engagement (Regression)
+
+```{r}
+model1 <- Political_Activity ~ # Outcome of interest
+  Rural +
+  City +
+  party_3 +
+  Age +
+  Male +
+  Black +
+  Latino +
+  High_School +
+  Some_College +
+  College +
+  HHIncome +
+  Year
+
+thompson1 <- lm(data = thompson, formula = model1)
+
+thompson1_model <- tidy(thompson1, conf.int = TRUE) %>% 
+  filter(!str_detect(term, 'factor|Intercept'))
+new_order <- order(thompson1_model$estimate, decreasing = FALSE)
+thompson1_model$term <- as.character(thompson1_model$term)
+thompson1_model$term <- factor(thompson1_model$term, levels = thompson1_model$term[new_order])
+# plot coefficient plot
+thompson1_plot <- ggplot(thompson1_model, aes(x=term, y = estimate)) + 
+  geom_hline(yintercept=0, colour="#8C2318") +  # Line at 0
+  geom_pointrange(aes(ymin=conf.low, ymax=conf.high)) +  # Ranges for each coefficient
+  labs(x="", y="Coefficient Estimate", title="OLS Estimates of Urbanicity on \nPolitical Engagement") +
+  theme(plot.title = element_text(size = 6)) +
+  theme(legend.title = element_blank()) +
+  theme(axis.title=element_text(size=8)) +
+  coord_flip() +
+  theme_minimal()
+
+ggplotly(thompson1_plot)
+
+
+rm("thompson","activity","engagement","bias","immigration","thompson1","thompson1_model",
+   "thompson1_plot","thompson2","thompson2_model","thompson2_plot")
+
+
+```
+
 Public Opinion {data-orientation=rows}
 ===========================================================
 
@@ -1265,7 +1438,7 @@ Row {.tabset .tabset-fade data-height=600}
 Stereotypes about welfare recipients led me to question whether welfare was a polarizing issue.
 I wanted to understand whether trust in the government and party membership could predict an individual’s views on welfare. 
 
-My first figure is a graph that shows the relationship between trust in the government and attitudes on welfare over time from 1970-2016. The red line represents individuals with a low trust in the federal government and the blue line represents individuals with high levels of trust in the federal government. From this graph, it can be concluded that people who trust the government tend to have a higher view of welfare, but both high trust and low trust people show a lot of variation in attitude over the years. Starting in 1970, both groups show increasingly positive feelings towards Welfare. Both groups experience a decline and sharp increase from 1990-2000 and in the early 2000s both groups show another increase. Ultimately, Americans who do not trust the government tend to have more negative feelings about welfare, but the attitude’s of both groups tend to vary around the same time and in the same direction. This makes me think that there must be another factor influencing public opinion on welfare. Future research is needed.
+My first figure is a graph that shows the relationship between trust in the government and attitudes on welfare over time from 1970-2016. The red line represents individuals with a low trust in the federal government and the blue line represents individuals with high levels of trust in the federal government. From this graph, it can be concluded that people who trust the government tend to have a higher view of welfare, but both high trust and low trust people show a lot of variation in attitude over the years. Starting in 1970, both groups show increasingly positive feelings towards Welfare. Both groups experience a decline and sharp increase from 1990-2000 and in the early 2000s both groups show another increase. Ultimately, Americans who do not trust the government tend to have more negative feelings about welfare, but the attitude’s of both groups tend to vary around the same time and in the same direction. This makes me think that there must be another factor influencing public opinion on welfare. Future research is needed.
 
 My next figure is a linear regression of level of trust in government on welfare attitudes. This model shows that race, ethnicity, income, and gender all have a positive relationship with warmer attitudes toward welfare recipients. Having a higher level of education, and self-identifying as conservative politically are associated with more negative attitudes toward welfare recipients. Controlling for all of these other factors, having greater trust in the federal government is associated with more positive attitudes toward welfare recipients.
 
